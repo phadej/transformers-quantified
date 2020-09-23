@@ -172,6 +172,19 @@ instance (Monad m, Monoid a) => Monoid (AForm m a) where
 instance (Monad m, Semigroup a) => Semigroup (AForm m a) where
     a <> b = (<>) <$> a <*> b
 
+-- No idea if this makes sense.
+instance Monad m => Monad (AForm m) where
+    return = pure
+
+    m >>= k = AForm $ \mr env ints -> do
+        (a, b, ints', c) <- unAForm m mr env ints
+        case a of
+            FormMissing      -> return (FormMissing, b, ints', c)
+            FormFailure errs -> return (FormFailure errs, b, ints', c)
+            FormSuccess suc  -> do
+                (x, y, ints'', z) <- unAForm (k suc) mr env ints'
+                return (x, b . y, ints'', c `mappend` z)
+
 instance MonadTrans AForm where
     lift f = AForm $ \_ _ ints -> do
         x <- f
