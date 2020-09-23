@@ -3,19 +3,28 @@ name:          transformers-quantified
 version:       0
 
 library
-  default-language: Haskell2010
+  default-language:   Haskell2010
   build-depends:
     , base          >=0 && <5
     , free
     , transformers
 
   -- plenty of big stuff
+  -- do applications define own transformers?
+  --
+  -- no idris in the list, as it doesn't support latest
+  -- versions of dependencies
   build-depends:
     , Agda
+    , criterion
     , darcs
-    , hakyll
+    , dhall
+    , LambdaHack
     , pandoc
+    , postgrest
+    , sbv
     , servant-client
     , servant-server
-    , postgrest
+    , servant-swagger
+    , tidal
     , yesod
