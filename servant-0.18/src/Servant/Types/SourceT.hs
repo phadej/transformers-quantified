@@ -4,6 +4,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Servant.Types.SourceT where
 
+import           Control.Monad
+                 (ap)
 import           Control.Monad.Except
                  (ExceptT (..), runExceptT, throwError)
 import           Control.Monad.Morph
@@ -52,6 +54,20 @@ data StepT m a
     | Yield a (StepT m a)
     | Effect (m (StepT m a))
   deriving Functor
+
+instance Monad m => Applicative (StepT m) where
+    pure x = Yield x Stop
+    (<*>)  = ap
+
+instance Monad m => Monad (StepT m) where
+    return x = Yield x Stop
+
+    -- Is this lawful? It type-checks!
+    Stop      >>= _ = Stop
+    Error err >>= _ = Error err
+    Skip m    >>= k = m >>= k
+    Effect m  >>= k = Effect (fmap (>>= k) m)
+    Yield x s >>= k = k x <> (s >>= k)
 
 -- | Create 'SourceT' from 'Step'.
 --
