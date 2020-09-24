@@ -14,14 +14,16 @@ module Data.X509.Validation.Fingerprint
 import Crypto.Hash
 import Data.X509
 import Data.ASN1.Types
-import Data.ByteArray (convert, ByteArrayAccess)
+import Data.ByteArray (convert, ByteArrayAccess (..))
 import Data.ByteString (ByteString)
 
 -- | Fingerprint of a certificate
 newtype Fingerprint = Fingerprint ByteString
     deriving (Show,Eq)
 
-instance ByteArrayAccess Fingerprint
+instance ByteArrayAccess Fingerprint where
+  length = error "length @Fingerprint: not implemented"
+  withByteArray = error "withByteArray @Fingerprint: not implemented"
 
 -- | Get the fingerprint of the whole signed object
 -- using the hashing algorithm specified
