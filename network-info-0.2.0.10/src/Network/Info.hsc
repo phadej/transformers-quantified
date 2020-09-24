@@ -53,6 +53,8 @@ instance Storable NetworkInterface where
         mac  <- (#peek struct network_interface, mac_address) ptr
         return $ NetworkInterface name ipv4 ipv6 mac
 
+    poke = error "poke @NetworkInferface"
+
 
 -- | Gets the address information for each of the network interfaces on
 --   the local computer.
